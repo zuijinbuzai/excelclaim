@@ -33,8 +33,8 @@ func sheet1(xlsx *excelize.File) {
 	sheet.WriteRow("市内交通费报销明细").SetRowHeight(34)
 	sheet.WriteRow("月份", "6", "姓名", "wwww", "部门", "", "研发部")
 	sheet.WriteRow("序号", "日期", "出发地", "到达地", "公务事由", "金额", "备注")
-
 	sheet.ApplyRowsRange(excelStyle2, 1, 3)
+
 	sheet.WriteRow("1", "2018.06.07", "公司", "宝安", "加班", "80.00", "").ApplyItem(1, excelStyle2)
 	sheet.WriteRow("2", "2018.06.07", "公司", "宝安", "加班", "80.00", "").ApplyItem(1, excelStyle2)
 	sheet.WriteRow("", "", "", "", "金额合计", "160.00")
