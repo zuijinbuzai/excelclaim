@@ -10,19 +10,17 @@ const BaseStyle = `{"border":[{"type":"left","color":"#09600b","style":1},{"type
 "font":{"bold":%t, "family":"微软雅黑", "fontSize":%d,"color":"#000000"},"alignment":{"horizontal":"%s", "vertical":"center"}}`
 
 type ExcelSheet struct {
-	xlsx   		*excelize.File
-	name   		string
-	colNum 		int
-	RowHeight	float64
-	preRowNum	int
-
+	xlsx      	*excelize.File
+	name      	string
+	colNum    	int
+	rowHeight 	float64
 	rowNum		int
 }
 
 var firstSheet = true
 
 func NewSheet(xlsx *excelize.File, sheet string, colNum int, rowHeight float64) (*ExcelSheet) {
-	excelSheet := &ExcelSheet{xlsx: xlsx, name: sheet, RowHeight: rowHeight, colNum: colNum}
+	excelSheet := &ExcelSheet{xlsx: xlsx, name: sheet, rowHeight: rowHeight, colNum: colNum}
 
 	if firstSheet {
 		xlsx.SetSheetName("Sheet1", sheet)
@@ -31,10 +29,6 @@ func NewSheet(xlsx *excelize.File, sheet string, colNum int, rowHeight float64) 
 		xlsx.NewSheet(sheet)
 	}
 	return excelSheet
-}
-
-func (p *ExcelSheet) SetRowNum(rowNum int) {
-	p.preRowNum = rowNum
 }
 
 func (p *ExcelSheet) SetColWidth(col int, width float64) {
@@ -61,10 +55,14 @@ func (p *ExcelSheet) WriteRow(cols ...string) (*ExcelSheetRow) {
 }
 
 func (p *ExcelSheet) Apply(excelStyle *ExcelStyle) {
-	if p.rowNum == 0 && p.preRowNum == 0 {
-		return
-	}
+	p.ApplyRows(excelStyle, p.rowNum)
+}
 
+func (p *ExcelSheet) ApplyRows(excelStyle *ExcelStyle, rowNum int) {
+	p.ApplyRowsRange(excelStyle, 1, rowNum)
+}
+
+func (p *ExcelSheet) ApplyRowsRange(excelStyle *ExcelStyle, rowStart int, rowEnd int) {
 	alignText := "center"
 	if excelStyle.align ==  -1 {
 		alignText = "left"
@@ -73,11 +71,9 @@ func (p *ExcelSheet) Apply(excelStyle *ExcelStyle) {
 	}
 	txt := fmt.Sprintf(BaseStyle, excelStyle.fontBold, excelStyle.fontSize, alignText)
 	style, _ := p.xlsx.NewStyle(txt)
-	realRowNum := p.rowNum
-	if realRowNum == 0 {
-		realRowNum = p.preRowNum
-	}
-	p.xlsx.SetCellStyle(p.name, "A1", makeFormatter(p.colNum, realRowNum), style)
+	s := makeFormatter(rowStart, rowStart)
+	print(s)
+	p.xlsx.SetCellStyle(p.name, s, makeFormatter(p.colNum, rowEnd), style)
 }
 
 func makeFormatter(col int, row int) (string) {
@@ -98,7 +94,7 @@ type ExcelSheetRow struct {
 func NewExcelSheetRow(sheet *ExcelSheet) (*ExcelSheetRow) {
 	sheet.rowNum++
 	excelSheetRow := &ExcelSheetRow{sheet:sheet, row:sheet.rowNum}
-	excelSheetRow.SetRowHeight(sheet.RowHeight)
+	excelSheetRow.SetRowHeight(sheet.rowHeight)
 	return excelSheetRow
 }
 
