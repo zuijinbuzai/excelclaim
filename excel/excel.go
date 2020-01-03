@@ -5,9 +5,9 @@ import (
 	"fmt"
 )
 
-const BaseStyle = `{"border":[{"type":"left","color":"#09600b","style":1},{"type":"top","color":"#09600b","style":1},
-{"type":"right","color":"#09600b","style":1},{"type":"bottom","color":"#09600b","style":1}],
-"font":{"bold":%t, "family":"微软雅黑", "fontSize":%d,"color":"#000000"},"alignment":{"horizontal":"%s", "vertical":"center"}}`
+const BaseStyle = `{"border":[{"type":"left","color":"#808080","style":1},{"type":"top","color":"#808080","style":1},
+{"type":"right","color":"#808080","style":1},{"type":"bottom","color":"#808080","style":1}],
+"font":{"bold":%t, "family":"calibri", "fontSize":%d,"color":"#000000"},"alignment":{"horizontal":"%s", "vertical":"justify"}}`
 
 type ExcelSheet struct {
 	xlsx      	*excelize.File
