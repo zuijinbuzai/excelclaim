@@ -32,19 +32,20 @@ func NewSheet(xlsx *excelize.File, sheet string, colNum int, rowHeight float64) 
 }
 
 func (p *ExcelSheet) SetColWidth(col int, width float64) {
-	colText := fmt.Sprintf("%c", 'A' + col - 1)
+	colText := toExcelColName(col)
 	p.xlsx.SetColWidth(p.name, colText, colText, width)
 }
 
 func (p *ExcelSheet) SetAllColsWidth(widths ... float64) {
 	for i, v := range widths {
-		colText := fmt.Sprintf("%c", 'A' + i)
+		colText := toExcelColName(i)
 		p.xlsx.SetColWidth(p.name, colText, colText, v)
 	}
 }
 
 func (p *ExcelSheet) SetCellValue(col int, row int, v interface{}) {
-	index := fmt.Sprintf("%c%d", 'A' + col - 1, row)
+	colText := toExcelColName(col)
+	index := fmt.Sprintf("%s%d", colText, row)
 	p.xlsx.SetCellValue(p.name, index, v)
 }
 
@@ -77,7 +78,8 @@ func (p *ExcelSheet) ApplyRowsRange(excelStyle *ExcelStyle, rowStart int, rowEnd
 }
 
 func makeFormatter(col int, row int) (string) {
-	index := fmt.Sprintf("%c%d", 'A' + col - 1, row)
+	colText := toExcelColName(col)
+	index := fmt.Sprintf("%s%d", colText, row)
 	return index
 }
 
@@ -172,6 +174,17 @@ type ExcelStyle struct {
 func NewExcelStyle(size int, align int, bold bool) (*ExcelStyle) {
 	excelStyle := &ExcelStyle{size, align, bold}
 	return excelStyle
+}
+
+func toExcelColName(colNum int) string {
+	result := ""
+
+	for colNum > 0 {
+		m := (colNum-1) % 26
+		result = string('A' + m) + result
+		colNum = (colNum - m)/26
+	}
+	return result
 }
 
 func (p *ExcelStyle) alignText() (string) {
