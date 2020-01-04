@@ -133,7 +133,6 @@ func (p *ExcelSheetRow) WriteRow(cols ...string) *ExcelSheetRow {
 	}
 
 	num := 0
-	// rnum := 0
 	for i, v := range cols {
 		if v == "-" {
 			num++
@@ -142,15 +141,6 @@ func (p *ExcelSheetRow) WriteRow(cols ...string) *ExcelSheetRow {
 				num = 0
 			}
 		}
-		// if v == "|" {
-		// 	rnum++
-		// 	// fmt.Printf("%d ", rnum)
-		// 	index := makeFormatter(i+1, p.row+1)
-		// 	if p.row-1 > 0 && p.sheet.xlsx.GetCellValue(p.sheet.name, index) != "|" {
-		// 		p.MergeRowCell(p.row-rnum, p.row, i+1)
-		// 		rnum = 0
-		// 	}
-		// }
 		p.SetCellValue(i+1, v)
 	}
 	return p
