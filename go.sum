@@ -8,5 +8,3 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/testify v1.2.3-0.20181224173747-660f15d67dbb h1:cRItZejS4Ok67vfCdrbGIaqk86wmtQNOjVD7jSyS2aw=
 github.com/stretchr/testify v1.2.3-0.20181224173747-660f15d67dbb/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
-github.com/zuijinbuzai/excelclaim v0.0.0-20180827025936-4def09ac2262 h1:fjzkEb6J2hmCgCx+8pKq4y8qiMmFU8iTfMwtanACeTg=
-github.com/zuijinbuzai/excelclaim v0.0.0-20180827025936-4def09ac2262/go.mod h1:BujbLVnYSrvK1FcUQzFONvd5SoKMgusRTqhE2OvwPOY=

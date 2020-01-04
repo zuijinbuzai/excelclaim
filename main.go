@@ -28,5 +28,8 @@ func mergeRow(xlsx *excelize.File) {
 	sheet.WriteRow("|", "|", "|", "-", "A1", "A2", "|", "|")
 	sheet.WriteRow("Column1", "Column2", "Column3", "A1.1", "A1.2", "A2.1", "B", "C")
 	sheet.MergeRow()
-	sheet.Apply(excel.NewExcelStyle(12, 0, false))
+	sheet.SetColor(1, 3, "#ffff00")
+	sheet.SetColor(4, 6, "#E0EBF5")
+	sheet.SetColor(7, 8, "#e4b001")
+	sheet.WriteRow("data 1", "data 2", "data 3", "data 4", "data 5", "data 6", "data 7", "data 8")
 }
