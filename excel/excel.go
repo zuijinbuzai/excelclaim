@@ -2,12 +2,29 @@ package excel
 
 import (
 	"fmt"
+	"log"
+	"regexp"
+
 	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
-const BaseStyle = `{"border":[{"type":"left","color":"#808080","style":1},{"type":"top","color":"#808080","style":1},
+const BaseStyle2 = `{"border":[{"type":"left","color":"#808080","style":1},{"type":"top","color":"#808080","style":1},
 {"type":"right","color":"#808080","style":1},{"type":"bottom","color":"#808080","style":1}],
 "font":{"bold":%t, "family":"calibri", "fontSize":%d,"color":"#000000"},"alignment":{"horizontal":"%s", "vertical":"distributed"}}`
+
+// 由於 excelize 本身的限制所以要設置顏色又覆蓋掉其他 style 設置，只能用這樣的方法
+const baseStyle = `
+{
+	"border":[
+		{"type":"left","color":"#808080","style":1},
+		{"type":"top","color":"#808080","style":1},
+		{"type":"right","color":"#808080","style":1},
+		{"type":"bottom","color":"#808080","style":1}
+	],
+	"font": {"family":"calibri", "fontSize":12, "color":"#000000"},
+	"alignment": {"horizontal":"center", "vertical":"distributed"},
+	"fill": {"type":"pattern","color":["%s"],"pattern":1}}
+`
 
 type ExcelSheet struct {
 	xlsx      *excelize.File
@@ -70,7 +87,7 @@ func (p *ExcelSheet) ApplyRowsRange(excelStyle *ExcelStyle, rowStart int, rowEnd
 	} else if excelStyle.align == 1 {
 		alignText = "right"
 	}
-	txt := fmt.Sprintf(BaseStyle, excelStyle.fontBold, excelStyle.fontSize, alignText)
+	txt := fmt.Sprintf(BaseStyle2, excelStyle.fontBold, excelStyle.fontSize, alignText)
 	style, _ := p.xlsx.NewStyle(txt)
 	s := makeFormatter(rowStart, rowStart)
 	print(s)
@@ -147,7 +164,7 @@ func (p *ExcelSheetRow) WriteRow(cols ...string) *ExcelSheetRow {
 }
 
 func (p *ExcelSheetRow) Apply(excelStyle *ExcelStyle) *ExcelSheetRow {
-	txt := fmt.Sprintf(BaseStyle, excelStyle.fontBold, excelStyle.fontSize, excelStyle.alignText())
+	txt := fmt.Sprintf(BaseStyle2, excelStyle.fontBold, excelStyle.fontSize, excelStyle.alignText())
 	style, _ := p.sheet.xlsx.NewStyle(txt)
 	beg := makeFormatter(1, p.row)
 	end := makeFormatter(p.sheet.colNum, p.row)
@@ -156,7 +173,7 @@ func (p *ExcelSheetRow) Apply(excelStyle *ExcelStyle) *ExcelSheetRow {
 }
 
 func (p *ExcelSheetRow) ApplyItem(col int, excelStyle *ExcelStyle) *ExcelSheetRow {
-	txt := fmt.Sprintf(BaseStyle, excelStyle.fontBold, excelStyle.fontSize, excelStyle.alignText())
+	txt := fmt.Sprintf(BaseStyle2, excelStyle.fontBold, excelStyle.fontSize, excelStyle.alignText())
 	style, _ := p.sheet.xlsx.NewStyle(txt)
 
 	beg := makeFormatter(col, p.row)
@@ -174,6 +191,27 @@ type ExcelStyle struct {
 func NewExcelStyle(size int, align int, bold bool) *ExcelStyle {
 	excelStyle := &ExcelStyle{size, align, bold}
 	return excelStyle
+}
+
+func (p *ExcelSheet) SetColor(startCol int, endCol int, colorHex string) *ExcelSheet {
+	match, _ := regexp.MatchString("^#[0-9A-Fa-f]{6}$", colorHex)
+	if !match {
+		log.Println("wrong hex code")
+		return p
+	}
+	styleStr := fmt.Sprintf(baseStyle, colorHex)
+	style, err := p.xlsx.NewStyle(styleStr)
+	if err != nil {
+		log.Println(err)
+		return p
+	}
+	for i := startCol; i <= endCol; i++ {
+		for j := 1; j <= p.rowNum; j++ {
+			index := makeFormatter(i, j)
+			p.xlsx.SetCellStyle(p.name, index, index, style)
+		}
+	}
+	return p
 }
 
 func (p *ExcelSheet) MergeRow() *ExcelSheet {
